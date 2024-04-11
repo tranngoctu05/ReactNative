@@ -1,24 +1,21 @@
 import React from 'react';
+import 'react-native-gesture-handler';
 import { Text, StyleSheet, View } from 'react-native';
-import styles from './AppStyle';
-import Lab1 from './Lab/Lab1/index'
-import Lab2 from './Lab/Lab2/index'
+import OnTap1 from './Lab/OnTap1/screens/Register';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Home from './Lab/OnTap1/screens/Home';
+import Register from './Lab/OnTap1/screens/Register';
+import Detail from './Lab/OnTap1/screens/Detail';
+const Stack = createNativeStackNavigator();
 const App = () => {
-
-
-
   return (
-    <View style={styles.container}>
-    <View style={styles.taskbar}>
-<Text style={styles.ten}>Lab_PS33973_Trần Ngọc Tú</Text>
-    </View>
-<View style={styles.body}>
-<Lab2/>
-</View>
+  <View>
 
-    </View>
-
+  </View>
   )
-}
+
+    ;
+};
 
 export default App;

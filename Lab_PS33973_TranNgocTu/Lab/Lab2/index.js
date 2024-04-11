@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, FlatList } from 'react-native'
 import React, { useState, useEffect } from 'react'
 
 const Lab2 = () => {
@@ -58,8 +58,6 @@ const Lab2 = () => {
     .filter(student => student.status === 'pass')
     .sort((a, b) => b.avgTraningPoint - a.avgTraningPoint);
   const ongVang = sortedByAvgPoint.length > 0 ? sortedByAvgPoint[0] : null;
-
-
   //bai2
   const oldData = [
     { code: 'ab', name: 'Son môi' },
@@ -67,25 +65,25 @@ const Lab2 = () => {
     { code: null, name: null },
     { code: null, name: '' },
   ];
-  const newData = {
-    ab: { code: 'ab', name: 'Son môi' },
-    ac: { code: 'ac', name: 'Sữa rửa nặt' }
-  }
+  
   const parseArrayToObject = ({ array = [], keyId = '' }) =>
     Object.fromEntries(
-      array?.map(item => [keyId ? item?.[keyId] : item, item] || [],
-      )
-    )
+      array?.map(item => [keyId ? item?.[keyId] : item, item] || [])
+    );
+  
   const filterObject = obj => {
-    Object.ket(obj).forEach(key => {
+    Object.keys(obj).forEach(key => {
       if (obj[key].code === null || obj[key].code === '') {
         delete obj[key];
       }
     });
     return obj;
-
   };
-
+  
+  const newData = parseArrayToObject({ array: oldData, keyId: 'code' });
+  const filteredData = filterObject(newData);
+  console.log(filteredData);
+  
 
   //bai3
   const firstPromise = new Promise((resolve, reject) => {
@@ -99,55 +97,103 @@ const Lab2 = () => {
     }, 2000)
   });
 
-  const getList = async () =>{
+
+
+  const getList = async () => {
     try {
       await Promise.all([firstPromise, secondPromise]).then(results => {
-          results.forEach(result => {
-              if (result.startsWith('Error')) {
-                  console.error(result);
-                  throw new Error('có lỗi');
-              }
-          });
+        results.forEach(result => {
+          if (result.startsWith('Error')) {
+            console.error(result);
+            throw new Error('có lỗi');
+          }
+        });
       }).then(() => {
-          console.log('tất cả ko có lỗi');
+        console.log('tất cả ko có lỗi');
       }).catch(error => {
-          console.error(error);
+        console.error(error);
       });
-
-      // Yêu cầu thứ hai: Tiếp tục cho tất cả các promise kết thúc, bất kể thành công hay thất bại
       await Promise.allSettled([firstPromise, secondPromise]).then(results => {
-          results.forEach(result => {
-              if (result.status === 'rejected') {
-                  console.error(result.reason);
-              }
-          });
+        results.forEach(result => {
+          if (result.status === 'rejected') {
+            console.error(result.reason);
+          }
+        });
       }).then(() => {
-          console.log('tất cả promise ok');
+        console.log('tất cả promise ok');
       }).catch(error => {
-          console.error(error);
+        console.error(error);
       }).finally(() => {
-          console.log('dù succed hay fail vẫn chạy');
+        console.log('dù succed hay fail vẫn chạy');
       });
-  } catch (error) {
+    } catch (error) {
       console.error(error);
-  }
-};
-  }
-
-
+    }
+  };
+  
   return (
     <View>
-      <Text>
-      </Text>
+      <Text style={styles.header}>Bài 1</Text>
+       <View style={styles.bai1}>
+        <Text style={styles.caption}>Thống kê danh sách sinh viên theo điểm trung bình:</Text>
+        {sortedByAvgPoint.map((danhsach, index) => (
+          <Text key={index} style={styles.content}>
+            {danhsach.mssv} - {danhsach.name} - {danhsach.avgPoint} - {danhsach.avgTraningPoint} - {danhsach.status}
+          </Text>
+        ))}
+      </View>
 
+      <View style={styles.bai1}>
+        <Text style={styles.caption}>Thông tin ong vàng:</Text>
+        {ongVang && (
+          <View>
+            <Text style={styles.content}>Name: {ongVang.name}</Text>
+            <Text style={styles.content}>Student ID: {ongVang.mssv}</Text>
+            <Text style={styles.content}>Average Point: {ongVang.avgPoint}</Text>
+            <Text style={styles.content}>Status: {ongVang.status}</Text>
+          </View>
+        )}
+      </View>
+      <Text style={styles.header}>Bài 2</Text>
+      <View style={styles.bai1}>
+        <Text style={styles.caption}>NewData</Text>
+      {Object.entries(filteredData).map(([key, value]) => (
+        <View key={key} style={styles.item}>
+          <Text>{`${key}: ${JSON.stringify(value)}`}</Text>
+        </View>
+      ))}
+    </View>
     </View>
   )
 }
 const styles = StyleSheet.create({
+  header:{
+fontSize:30,
+padding:20,
+fontWeight:'bold',
+color:'red'
 
+  },
   container: {
-    backgroundColor: 'white'
-  }
+    flex: 1,
+    padding: 20,
+  },
+  bai1: {
+    marginTop:10,
+    marginBottom: 20,
+    padding: 20,
+    borderWidth:1,
+    
+  },
+  caption: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  content: {
+    fontSize: 16,
+    marginBottom: 5,
+  },
 
 })
 export default Lab2
